@@ -86,6 +86,14 @@ export default function Rapports() {
           <span className="button-icon">🏗️</span>
           Gérer les chantiers
         </button>
+
+        <button
+          className="nav-button"
+          onClick={() => router.push("/calculs-electriques")}
+        >
+          <span className="button-icon">⚡</span>
+          Calculs électriques
+        </button>
       </div>
 
       {rapports.length === 0 ? (

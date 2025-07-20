@@ -135,6 +135,14 @@ export default function Chantiers() {
           <span className="button-icon">📋</span>
           Voir les rapports
         </button>
+
+        <button
+          className="secondary-button"
+          onClick={() => router.push("/calculs-electriques")}
+        >
+          <span className="button-icon">⚡</span>
+          Calculs électriques
+        </button>
       </div>
 
       {showForm && (

@@ -89,6 +89,14 @@ export default function Home() {
           <span className="button-icon">📋</span>
           Voir l&apos;historique
         </button>
+
+        <button
+          className="nav-button"
+          onClick={() => router.push("/calculs-electriques")}
+        >
+          <span className="button-icon">⚡</span>
+          Calculs électriques
+        </button>
       </div>
 
       <div className="form-container">
