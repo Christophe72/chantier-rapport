@@ -19,6 +19,13 @@ type Rapport = {
  */
 export default function Rapports() {
   const [rapports, setRapports] = useState<Rapport[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<Rapport>({
+    date: "",
+    chantier: "",
+    etat: "",
+    remarques: "",
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -32,6 +39,31 @@ export default function Rapports() {
       localStorage.setItem("rapports", JSON.stringify(updatedRapports));
       setRapports(updatedRapports);
     }
+  };
+
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+    setEditForm({ ...rapports[index] });
+  };
+
+  const handleSaveEdit = () => {
+    if (editingIndex !== null) {
+      const updatedRapports = [...rapports];
+      updatedRapports[editingIndex] = editForm;
+      localStorage.setItem("rapports", JSON.stringify(updatedRapports));
+      setRapports(updatedRapports);
+      setEditingIndex(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditForm({
+      date: "",
+      chantier: "",
+      etat: "",
+      remarques: "",
+    });
   };
 
   return (
@@ -68,44 +100,137 @@ export default function Rapports() {
         <div className="rapports-grid">
           {rapports.map((r, i) => (
             <div key={i} className="rapport-card">
-              <div className="rapport-header">
-                <div className="date-badge">
-                  📅{" "}
-                  {new Date(r.date).toLocaleDateString("fr-FR", {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </div>
-                <div className={`status-badge status-${r.etat.toLowerCase()}`}>
-                  {r.etat}
-                </div>
-              </div>
-
-              <div className="rapport-content">
-                <div className="chantier-info">
-                  <span className="label">🏗️ Chantier</span>
-                  <span className="value">{r.chantier}</span>
-                </div>
-
-                {r.remarques && (
-                  <div className="remarques-section">
-                    <span className="label">💬 Remarques</span>
-                    <p className="remarques-text">{r.remarques}</p>
+              {editingIndex === i ? (
+                // Mode édition
+                <div className="edit-form">
+                  <div className="edit-header">
+                    <h3 className="edit-title">✏️ Modifier le rapport</h3>
                   </div>
-                )}
-              </div>
 
-              <div className="rapport-actions">
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(i)}
-                >
-                  <span className="button-icon">🗑️</span>
-                  Supprimer
-                </button>
-              </div>
+                  <div className="form-group">
+                    <label className="form-label">📅 Date</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={editForm.date}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, date: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">🏗️ Chantier</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editForm.chantier}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, chantier: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      📊 État d&apos;avancement
+                    </label>
+                    <select
+                      className="form-select"
+                      value={editForm.etat}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, etat: e.target.value })
+                      }
+                    >
+                      <option value="">Sélectionner un état</option>
+                      <option value="Planifié">Planifié</option>
+                      <option value="En cours">En cours</option>
+                      <option value="Terminé">Terminé</option>
+                      <option value="Suspendu">Suspendu</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      💬 Remarques (optionnel)
+                    </label>
+                    <textarea
+                      className="form-textarea"
+                      rows={3}
+                      value={editForm.remarques}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, remarques: e.target.value })
+                      }
+                      placeholder="Ajoutez des remarques ou observations..."
+                    />
+                  </div>
+
+                  <div className="edit-actions">
+                    <button className="save-button" onClick={handleSaveEdit}>
+                      <span className="button-icon">💾</span>
+                      Enregistrer
+                    </button>
+                    <button
+                      className="cancel-button"
+                      onClick={handleCancelEdit}
+                    >
+                      <span className="button-icon">❌</span>
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // Mode affichage normal
+                <>
+                  <div className="rapport-header">
+                    <div className="date-badge">
+                      📅{" "}
+                      {new Date(r.date).toLocaleDateString("fr-FR", {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
+                    <div
+                      className={`status-badge status-${r.etat.toLowerCase()}`}
+                    >
+                      {r.etat}
+                    </div>
+                  </div>
+
+                  <div className="rapport-content">
+                    <div className="chantier-info">
+                      <span className="label">🏗️ Chantier</span>
+                      <span className="value">{r.chantier}</span>
+                    </div>
+
+                    {r.remarques && (
+                      <div className="remarques-section">
+                        <span className="label">💬 Remarques</span>
+                        <p className="remarques-text">{r.remarques}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rapport-actions">
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEdit(i)}
+                    >
+                      <span className="button-icon">✏️</span>
+                      Modifier
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(i)}
+                    >
+                      <span className="button-icon">🗑️</span>
+                      Supprimer
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -316,6 +441,7 @@ export default function Rapports() {
           border-top: 1px solid #e2e8f0;
           display: flex;
           justify-content: flex-end;
+          gap: 8px;
         }
 
         .delete-button {
@@ -334,6 +460,133 @@ export default function Rapports() {
         }
 
         .delete-button:hover {
+          background: #c53030;
+          transform: translateY(-1px);
+        }
+
+        .edit-button {
+          background: #3182ce;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.2s ease;
+          font-size: 0.875rem;
+        }
+
+        .edit-button:hover {
+          background: #2c5aa0;
+          transform: translateY(-1px);
+        }
+
+        .edit-form {
+          padding: 4px;
+        }
+
+        .edit-header {
+          margin-bottom: 24px;
+          text-align: center;
+          padding-bottom: 16px;
+          border-bottom: 2px solid #e2e8f0;
+        }
+
+        .edit-title {
+          color: #2d3748;
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin: 0;
+        }
+
+        .form-group {
+          margin-bottom: 20px;
+        }
+
+        .form-label {
+          display: block;
+          font-weight: 600;
+          color: #4a5568;
+          margin-bottom: 8px;
+          font-size: 0.875rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 1rem;
+          transition: all 0.2s ease;
+          background: white;
+          color: #000000;
+          box-sizing: border-box;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+          outline: none;
+          border-color: #3182ce;
+          box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 80px;
+          font-family: inherit;
+        }
+
+        .edit-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .save-button {
+          background: #38a169;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+          font-size: 1rem;
+        }
+
+        .save-button:hover {
+          background: #2f855a;
+          transform: translateY(-1px);
+        }
+
+        .cancel-button {
+          background: #e53e3e;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+          font-size: 1rem;
+        }
+
+        .cancel-button:hover {
           background: #c53030;
           transform: translateY(-1px);
         }
@@ -366,6 +619,17 @@ export default function Rapports() {
           }
 
           .rapport-actions {
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+
+          .edit-actions {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .save-button,
+          .cancel-button {
             justify-content: center;
           }
         }
