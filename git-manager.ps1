@@ -41,8 +41,11 @@ function Push-ToGitHub {
     Write-Host ""
 
     # Vérifier les modifications
-    $hasChanges = (git diff --quiet --exit-code; $LASTEXITCODE -ne 0) -or 
-                  (git diff --cached --quiet --exit-code; $LASTEXITCODE -ne 0)
+    git diff --quiet --exit-code
+    $diffResult = $LASTEXITCODE
+    git diff --cached --quiet --exit-code
+    $cachedDiffResult = $LASTEXITCODE
+    $hasChanges = ($diffResult -ne 0) -or ($cachedDiffResult -ne 0)
     
     if (-not $hasChanges) {
         Show-Info "Aucune modification détectée."
