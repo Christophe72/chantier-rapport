@@ -46,13 +46,13 @@ type CalculElectrique = {
   dateCalcul: string;
 };
 
-type Materiel = {
-  id: string;
-  categorie: "cable" | "disjoncteur" | "luminaire" | "prise" | "autre";
-  nom: string;
-  caracteristiques: unknown;
-  prix?: number;
-};
+// type Materiel = {
+//   id: string;
+//   categorie: "cable" | "disjoncteur" | "luminaire" | "prise" | "autre";
+//   nom: string;
+//   caracteristiques: unknown;
+//   prix?: number;
+// };
 
 export default function CalculsElectriques() {
   const [activeTab, setActiveTab] = useState<
@@ -60,7 +60,7 @@ export default function CalculsElectriques() {
   >("calculs");
   const [selectedCalcul, setSelectedCalcul] = useState<string>("puissance");
   const [calculs, setCalculs] = useState<CalculElectrique[]>([]);
-  const [materiels, setMateriels] = useState<Materiel[]>([]);
+  //   const [materiels, setMateriels] = useState<Materiel[]>([]);
   const router = useRouter();
 
   // Paramètres pour les calculs
@@ -169,9 +169,23 @@ export default function CalculsElectriques() {
   const sauvegarderCalcul = (
     type: CalculElectrique["type"],
     resultats:
-      | { puissanceApparente: number; puissanceActive: number; puissanceReactive: number }
-      | { courant: string; sectionCalculee: string; sectionRecommandee: number; chuteRelle: number }
-      | { disjoncteurRecommande: number; sectionMinimale: number; nombrePointsMax: number; conformeNFC15100: boolean }
+      | {
+          puissanceApparente: number;
+          puissanceActive: number;
+          puissanceReactive: number;
+        }
+      | {
+          courant: string;
+          sectionCalculee: string;
+          sectionRecommandee: number;
+          chuteRelle: number;
+        }
+      | {
+          disjoncteurRecommande: number;
+          sectionMinimale: number;
+          nombrePointsMax: number;
+          conformeNFC15100: boolean;
+        }
   ) => {
     const nouveauCalcul: CalculElectrique = {
       id: Date.now().toString(),
