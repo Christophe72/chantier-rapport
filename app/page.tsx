@@ -19,11 +19,7 @@ type Chantier = {
 /**
  * Composant de la page d'accueil pour créer un rapport journalier de chantier.
  *
- * Ce c        }
-      `}</style>
-    </main>
-  );
-}ant affiche un formulaire permettant à l'utilisateur de saisir le nom du chantier,
+ * Ce composant affiche un formulaire permettant à l'utilisateur de saisir le nom du chantier,
  * l'état d'avancement et des remarques. Lors de la soumission, les données du rapport sont enregistrées
  * dans le localStorage avec un horodatage et l'utilisateur est redirigé vers la page des rapports.
  *
